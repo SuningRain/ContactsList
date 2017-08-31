@@ -10,7 +10,8 @@
         android:adjustViewBounds="true"/>
     <TextView
         android:id="@+id/recycler_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"/>

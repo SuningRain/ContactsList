@@ -9,12 +9,31 @@ import android.graphics.Bitmap;
 public class Contacts {
     private String name;
     private Bitmap bitmap;
-
-
-    public Contacts(String name,Bitmap bitmap){
+    private String number;
+    private int rawContactId;
+    public Contacts(String name,Bitmap bitmap,String number,int rawContactId){
         this.name=name;
         this.bitmap=bitmap;
+        this.number=number;
+        this.rawContactId=rawContactId;
     }
+
+    public int getRawContactId() {
+        return rawContactId;
+    }
+
+    public void setRawContactId(int rawContactId) {
+        this.rawContactId = rawContactId;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     public String getName() {
         return name;
     }

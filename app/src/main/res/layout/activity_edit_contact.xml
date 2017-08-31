@@ -39,8 +39,7 @@
                 android:layout_weight="1"
                 android:gravity="bottom"
                 android:hint="姓名"
-                android:textSize="15sp"
-                android:textColor="#fff"/>
+                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/input_phone_number"
@@ -49,8 +48,7 @@
                 android:layout_weight="1"
                 android:gravity="bottom"
                 android:hint="号码"
-                android:textSize="15sp"
-                android:textColor="#fff"/>
+                android:textSize="15sp" />
         </LinearLayout>
 
     </RelativeLayout>

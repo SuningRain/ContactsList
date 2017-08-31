@@ -30,10 +30,11 @@
 
         <Button
             android:id="@+id/sendmessage"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
             android:background="@drawable/send_message" />
 
         <Button
@@ -42,6 +43,7 @@
             android:layout_height="25dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/sendmessage"
+            android:layout_marginRight="30dp"
             android:background="@drawable/call" />
     </RelativeLayout>
 

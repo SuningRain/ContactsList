@@ -20,7 +20,7 @@
         android:textSize="20sp"
         android:textColor="@color/colorWhite"/>
     <Button
-        android:id="@+id/edit_contact"
+        android:id="@+id/modify_contact"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_centerVertical="true"

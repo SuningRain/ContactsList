@@ -1,5 +1,7 @@
 package com.twoexample.adresslist;
 
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,6 +18,8 @@ import android.Manifest;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -33,19 +37,56 @@ public class MainActivity extends AppCompatActivity {
     private List<Contacts> mContactsList=new ArrayList<>();
 
     private RecyclerView contactsView;
+    private Button addContact;
     ContactAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //实例化控件
         contactsView =(RecyclerView) findViewById(R.id.contacts_view);
+        addContact = (Button) findViewById(R.id.add_contact);
+
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayout.VERTICAL);
         contactsView.setLayoutManager(layoutManager);
-        adapter=new ContactAdapter(mContactsList);
+        adapter=new ContactAdapter(mContactsList,this);
         contactsView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new ContactAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent=new Intent(MainActivity.this,ContactInformation.class);
+                intent.putExtra("name",mContactsList.get(position).getName());
+                intent.putExtra("number",mContactsList.get(position).getNumber());
+                intent.putExtra("photo",mContactsList.get(position).getBitmap());
+                intent.putExtra("rawcontactid",mContactsList.get(position).getRawContactId());
+                intent.putExtra("from",1);
+                startActivity(intent);
+            }
+        });
+        adapter.setOnItemLongClickListener(new ContactAdapter.onItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                int rawContactId = mContactsList.get(position).getRawContactId();
+                deleteContact(rawContactId, position);
+                mContactsList.clear();
+                readContacts();
+            }
+        });
+
+        //查询本地联系人
         localData();
+        //添加单个用户数据
+        addContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent addContactIntent =new Intent(MainActivity.this,EditContact.class);
+                addContactIntent.putExtra("from",1);
+                startActivity(addContactIntent);
+            }
+        });
         }
 
     private void localData() {
@@ -72,11 +113,13 @@ public class MainActivity extends AppCompatActivity {
                     //获得联系人姓名
                     String displayName=cursor.getString(cursor.getColumnIndex(ContactsContract
                             .CommonDataKinds.Phone.DISPLAY_NAME));
-
-                    Log.i("cursor",displayName);
+                    //获得联系人电话号码
+                    String phoneNumber=cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     //获取联系人图像
                     image_uri=cursor.getString(cursor.getColumnIndex(ContactsContract
                             .CommonDataKinds.Phone.PHOTO_URI));
+                    //获得联系人的id
+                    int rawContactId=cursor.getInt(cursor.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
                     if (image_uri!=null) {
                         try {
                             bitmap= MediaStore.Images.Media
@@ -87,9 +130,8 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                    Contacts contacts=new Contacts(displayName,bitmap);
+                    Contacts contacts=new Contacts(displayName,bitmap,phoneNumber,rawContactId);
                     mContactsList.add(contacts);
-                    Log.i("mContactsList",contacts.getName());
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -113,6 +155,28 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             default:
+        }
+    }
+    public void deleteContact(int rawContactId,int position){
+        Uri uri1=Uri.parse("content://com.android.contacts/raw_contacts");
+        Uri uri2=Uri.parse("content://com.android.contacts/data");
+        ContentResolver resolver=getContentResolver();
+//        Cursor cursor=resolver.query(uri1,new String[]{ContactsContract.Data._ID},"_id=?",new String[]{rawContactId+""},null);
+//
+//        if(cursor.moveToFirst()){
+//            cursor.getInt(0);
+//            resolver.delete()
+//            Toast.makeText(this,"正在删除数据",Toast.LENGTH_SHORT).show();
+//
+//        }
+
+        try {
+            resolver.delete(uri1,"_id=?",new String[]{rawContactId+""} );
+            resolver.delete(uri2,"raw_contact_id=?",new String[]{rawContactId+""});
+            Toast.makeText(this,"数据删除成功",Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this,"数据删除失败",Toast.LENGTH_SHORT).show();
         }
     }
 }

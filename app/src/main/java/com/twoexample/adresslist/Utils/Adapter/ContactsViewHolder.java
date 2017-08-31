@@ -14,8 +14,10 @@ import com.twoexample.adresslist.R;
 public class ContactsViewHolder extends RecyclerView.ViewHolder{
     ImageView contactImage;
     TextView contactName;
+    View contactView;
     public ContactsViewHolder(View view){
         super(view);
+        contactView=view;
         contactImage =(ImageView)view.findViewById(R.id.recycler_picture);
         contactName =(TextView)view.findViewById(R.id.recycler_name);
     }
